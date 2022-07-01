@@ -1,6 +1,6 @@
 apiVersion: v2
-name: .
-description: A Helm chart for deploying fleet (game servers) using ArgoCD application
+name: fleet-argo-cd
+description: A Helm chart for deploying fleet (game servers) in Agones using ArgoCD 
 
 # A chart can be either an 'application' or a 'library' chart.
 #

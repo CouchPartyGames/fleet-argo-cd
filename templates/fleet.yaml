@@ -1,4 +1,7 @@
 ---
+# https://agones.dev/site/docs/reference/fleet/
+# https://agones.dev/site/docs/reference/gameserver/
+
 apiVersion: "agones.dev/v1"
 kind: Fleet
 metadata:
