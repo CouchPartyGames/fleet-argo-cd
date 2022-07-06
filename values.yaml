@@ -81,5 +81,20 @@ affinity: {}
 
 project: {}
 
-fleet: {}
 
+fleet:
+  name: ""
+
+  image: ""
+  tag: ""
+  creds: ""
+
+  labels: {}
+  #  customer: some-company
+  #  game: some-game
+  #  region: some-region
+
+
+autoscaler:
+  type: "buffer"
+  #type: "webhook"

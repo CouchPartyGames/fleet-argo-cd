@@ -5,7 +5,11 @@
 apiVersion: "agones.dev/v1"
 kind: Fleet
 metadata:
-  name: simple-game-server
+  name: {{ .Values.fleet.name }}
+  labels:
+    {{- range $key, $val := .Values.fleet.labels }}
+    {{ $key }}: {{ $val | quote }}
+    {{- end }}
 spec:
   replicas: 2
   template:
