@@ -12,11 +12,29 @@ metadata:
     {{- end }}
 spec:
   replicas: 2
+  scheduling: Packed
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   template:
     spec:
+      metadata:
+        labels:
+          {{- range $key, $val := .Values.fleet.labels }}
+          {{ $key }}: {{ $val | quote }}
+          {{- end }}
       ports:
       - name: default
         containerPort: 7654
+      health:
+        initialDelaySeconds: 30
+        periodSeconds: 15
+      sdkServer:
+        logLevel: Info
+        grpcPort: 9357
+        httpPort: 9358
       template:
         spec:
           containers:
