@@ -43,8 +43,8 @@ spec:
         containerPort: 7654
       health:
         disabled: {{ .Values.gameServer.health.disabled }}
-        initialDelaySeconds: 30
-        periodSeconds: 15
+        initialDelaySeconds: {{ .Values.gameServer.health.initialDelay }}
+        periodSeconds: {{ .Values.gameServer.health.periodSeconds }}
       sdkServer:
         logLevel: Info
         grpcPort: 9357
