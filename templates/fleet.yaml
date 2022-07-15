@@ -5,14 +5,25 @@
 apiVersion: "agones.dev/v1"
 kind: Fleet
 metadata:
-  name: {{ .Values.fleet.name }}
+  name: {{ .Values.fleet.name | default "default-fleet" }}
+  {{- if .Values.fleet.labels }}
   labels:
     {{- range $key, $val := .Values.fleet.labels }}
     {{ $key }}: {{ $val | quote }}
     {{- end }}
+  {{- end }}
+
+  {{- if .Values.fleet.annotations }}
+  annotations:
+    {{- range $key, $val := .Values.fleet.annotations }}
+    {{ $key }}: {{ $val | quote }}
+    {{- end }}
+  {{- end }}
 spec:
-  replicas: 2
-  scheduling: Packed
+  {{- if .Values.fleet.replicas }}
+  replicas: {{ .Values.fleet.replicas | default "1" }}
+  {{- end }}
+  scheduling: {{ .Values.fleet.scheduling | default "Packed" }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -20,15 +31,18 @@ spec:
       maxUnavailable: 25%
   template:
     spec:
+      {{- if .Values.fleet.labels }}
       metadata:
         labels:
           {{- range $key, $val := .Values.fleet.labels }}
           {{ $key }}: {{ $val | quote }}
           {{- end }}
+      {{- end }}
       ports:
       - name: default
         containerPort: 7654
       health:
+        disabled: {{ .Values.gameServer.health.disabled }}
         initialDelaySeconds: 30
         periodSeconds: 15
       sdkServer:
@@ -38,8 +52,8 @@ spec:
       template:
         spec:
           containers:
-          - name: simple-game-server
-            image: gcr.io/agones-images/simple-game-server:0.13
+          - name: {{ .Values.gameServer.name | quote }}
+            image: "{{ .Values.gameServer.image }}:{{ .Values.gameServer.tag }}"
             resources:
               requests:
                 memory: "64Mi"
@@ -47,4 +61,10 @@ spec:
               limits:
                 memory: "64Mi"
                 cpu: "20m"
-
+          {{- if .Values.gameServer.registryCreds }}
+          imagePullSecrets:
+          - name: regcred
+          {{- end }}
+          nodeSelector:
+            #kubernetes.io/os: windows
+            kubernetes.io/os: linux

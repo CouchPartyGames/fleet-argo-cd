@@ -1,4 +1,4 @@
-{{ if ( eq .Values.autoscaler.type "webhook" ) }}
+{{ if ( eq .Values.autoScaler.type "webhook" ) }}
 
 ---
 apiVersion: v1
@@ -50,5 +50,4 @@ spec:
             port: 8000
           initialDelaySeconds: 3
           periodSeconds: 5
-
 {{ end }}
