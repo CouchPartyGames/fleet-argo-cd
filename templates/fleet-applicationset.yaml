@@ -1,0 +1,47 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: bgd
+  namespace: openshift-gitops
+spec:
+  generators:
+  - list:
+      elements:
+      - cluster: cluster1
+        url: https://api.cluster1.chx.osecloud.com:6443
+        valueFile: test.yaml
+        region: region
+        version: version
+     - cluster: cluster2
+        url: https://api.cluster2.chx.osecloud.com:6443
+        valueFile: test.yaml
+        region: region
+        version: version
+      - cluster: cluster3
+        url: https://api.cluster3.chx.osecloud.com:6443
+        valueFile: test.yaml
+        region: region
+        version: version
+  template:
+    metadata:
+      name: '{{cluster}}-bgd'
+    spec:
+      project: default
+
+      source:
+        repoURL: https://github.com/christianh814/gitops-examples
+        targetRevision: 1.0.0
+        chart: fleet
+        helm:
+          valueFiles:
+          - {{ valueFile }}
+
+      destination:
+        server: {{ region }}
+        namespace: bgd
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
