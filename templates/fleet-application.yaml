@@ -2,24 +2,43 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: guestbook
+  name: {{ .Values.app.name }}
   namespace: argocd
+
+  {{- if .Values.app.labels }}
+  labels:
+    {{- range $key, $val := .Values.app.labels }}
+    {{ $key }}: {{ $val | quote }}
+    {{- end }}
+  {{- end }}
+    
 spec:
-  project: default
+  project: {{ .Values.project.name }}
 
   source:
-    repoURL: https://github.com/argoproj/argocd-example-apps.git
-    targetRevision: 1.0.0
+    repoURL: https://couchpartygames.github.io/fleet
+    targetRevision: {{ .Values.app.version }}
     chart: fleet
     helm:
-      valueFiles:
-      - prod.yaml
+      externalValueFiles:
+        - repoURL: https://github.com/KaiReichart/argo-test-values.git
+          targetRevision: main
+          valueFiles:
+            - values.yaml
 
   destination:
-    server: https://kubernetes.default.svc
-    namespace: guestbook
+    name: {{ .Values.project.clusterName }}
+    namespace: 
 
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3 
+      backoff:
+        duration: 15s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+        factor: 2 # a factor to multiply the base duration after each failed retry
+        maxDuration: 3m # the maximum amount of time allowed for the backoff strategy

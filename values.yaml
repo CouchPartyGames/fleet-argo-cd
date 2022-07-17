@@ -1,5 +1,16 @@
 
+project:
+  name: Test
+  description: Test Description
+  clusterName: us-east
+  client:
+  game:
+  region:
 
-project: {}
 
+app:
+  name: my-game
+  version: 1.0.3
+  labels: {}
+  valueFiles: []
 
